@@ -136,14 +136,13 @@ var dog = function(x,y,size) {
         ellipse(229,588,179,86);
     popMatrix();
 };
-
 var Ball = function(){
     this.x        = 300;
     this.y        = 300;
     this.falling  = true;
     this.right    = true;
     this.size     = 15;
-    this.speed    = 3;
+    this.speed    = Ball.speed || 3;
     this.x_speed  = random(1, this.speed);
     this.y_speed  = random(1, this.speed);
 };
@@ -224,10 +223,9 @@ var Brick = function(x, y){
     this.yend     = y + this.height;
     this.num      = 1;
     this.num_rows = 1;
-    this.away     = -1000;
 };
-Brick.percent = [11, 5];
-
+Brick.percent  = [11, 5];
+Brick.away     = -1000;
 Brick.prototype.draw = function() {
     Random_color();
     var shakeX = this.x + random(-4, 4);
@@ -310,7 +308,7 @@ var intro = function() {
     background(255, 255, 0);
     strokeWeight(10);
     fill(0, 0, 255);
-//not going into the if statement
+
     textSize(70);
     text("SEIZURE BRICKS", 1, 150);
     textSize(40);
@@ -327,10 +325,9 @@ var intro = function() {
               
 
     if (keyIsPressed) {
-        setup();
         switch(key.code) {
-        case 49: //easy, 1
-            ball.speed       = 2;
+        case 49:        // "1"
+            Ball.speed       = 2;
             diff             = 1;
             Brick.num        = 6;
             Brick.num_rows   = 3; 
@@ -339,8 +336,8 @@ var intro = function() {
             Brick.percent[0] = 4;
             Brick.percent[1] = 3;
             break;
-        case 50: // medium, 2
-            ball.speed       = 3;      
+        case 50:        // "2"
+            Ball.speed       = 3;      
             Brick.num        = 8;
             Brick.num_rows   = 5;
             diff             = 2;
@@ -349,8 +346,8 @@ var intro = function() {
             Brick.percent[0] = 4;
             Brick.percent[1] = 2;
             break;
-        case 51: // hard, 3
-            ball.speed       = 4;   
+        case 51:        // "3"
+            Ball.speed       = 4;   
             Brick.num        = 10;
             Brick.num_rows   = 6;
             diff             = 3;
@@ -359,10 +356,8 @@ var intro = function() {
             Brick.percent[0] = 4;
             Brick.percent[1] = 1;
             break;
-        case 48: // test, 0
-            println(48);
-            ball.speed       = 3;
-            println(48);
+        case 48:        // "0"
+            Ball.speed       = 3;
             Brick.num        = 2;
             Brick.num_rows   = 1;
             diff             = 0;
@@ -373,22 +368,14 @@ var intro = function() {
             break;
         }
 
-        // switch(key.code) {
-        // case 48:
-        // case 49:
-        //case 50:
-        //case 51:
-            println('Line 378');
-            Brick.num    = width / Brick.num;
-            Brick.height = Brick.width / 2;
-            setup();
-            ball.x_speed = random(1, ball.speed);
-            ball.y_speed = random(1, ball.speed);
-            screen       = 1;
-        //   break;
-        //}
+        Brick.width    = width / Brick.num;
+        Brick.height = Brick.width / 2;
+        ball.x_speed = random(1, ball.speed);
+        ball.y_speed = random(1, ball.speed);
+        
+        setup();
+        screen       = 1;
     }
-    
 
     easy.draw();
     medium.draw();
@@ -445,13 +432,14 @@ var setup = function() {
     bricks                           = [];
     score                            = 0;
     ball.size                        = 15;
-    Paddle_array.twoarrays[0].length = 175;
+    thePaddles.twoarrays[0].length = 175;
     for (var row = 0; row < Brick.num_rows; row ++) {
         for (var b = 0; b < width / Brick.width; b ++) {
             if (random(0, Brick.percent[0]) > Brick.percent[1]) {
                 bricks.push(new Brick(b * Brick.width, row * Brick.height));}
         }
     }
+
     if(diff === 1) {
         ball.speed = 2;
     }
@@ -585,7 +573,6 @@ draw = function() {
     if (screen === 0) {
         intro();
     } else if (screen === 1 && !paused){
-        println(screen);
         game();
     }
     //flip();
