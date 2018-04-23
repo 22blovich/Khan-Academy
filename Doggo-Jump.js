@@ -298,12 +298,6 @@ Brick.prototype.draw = function() {
     this.y += this.velocity.y;
     
     dog(this.x, this.y, 0.15);
-    
-    // strokeWeight(10);
-    // stroke(0, 255, 132);
-    // point(this.x,this.y);
-    // noStroke();
-    // rect(this.x, this.y, this.width, this.height);
 };
 
 Brick.prototype.slide = function() {
@@ -325,7 +319,6 @@ Brick.prototype.jump = function() {
 };      
 
 Brick.prototype.land = function() {
-    //println(this.y-this.height);
     if (this.y + this.height >= theGround.y) {
         this.y = theGround.y - this.height;
         this.velocity = new PVector(0,0);
@@ -381,12 +374,7 @@ Enemy.prototype.draw = function() {
     
     this.worldx += this.direction;
     
-    // if (this.worldx < this.worldx - 150) {
-    //     this.worldx ++;
-    // } else {
-    //     this.worldx --;
-    // }    
-    // rect(this.x - 58, this.y - 65, 62, 70);
+   
 };
 
 Enemy.prototype.hitMyHead = function(player) {
@@ -432,26 +420,7 @@ Brick.prototype.kill = function(enemy) {
     } else if (enemy.hitMyBody(this)) {
         this.dead = true;
     }
-    
-    // if (this.x + this.width >= enemy.x && this.x <= enemy.x) {
-    //     //update mheight
-    //     println("good");
-    //     if (this.y >= this.maxHeightOverEnemy) {
-    //         println("great");
-    //         this.maxHeightOverEnemy = this.y;
-    //     }
-    //     //If y is 
-    //     if (this.maxHeightOverEnemy >= 0) {
-            
-    //     } else if (this.maxHeightOverEnemy < 260 && this.y > 260){
-    //         this.score ++;
-    //     } else if (this.maxHeightOverEnemy > 260 && this.y > 260){
-    //         this.dead = true;
-    //     }
-    // } 
-    // else { 
-    //     this.maxHeightOverEnemy =-1;
-    // }
+
 };    
 
 var mouseClicked = function() {
@@ -470,10 +439,6 @@ var Setup = function() {
       Bads.push(new Enemy(enemyCoords[i][0], enemyCoords[i][1]));
     }
     
-    // theBrick.x    = 100;
-    // theBrick.y    = 0;
-    // theBrick.worldx = 200;
-    // theBrick.score = 0;
     SunTimer = 0;
 };    
 
@@ -486,7 +451,6 @@ var keyPressed = function() {
     if (keyCode === 82) {
         Setup();
     }    
-    // go to menu dosnt work. need help.
     if (keyCode === 77) {
         screen = 0;
     
@@ -509,7 +473,7 @@ var game = function() {
     ellipse(SunTimer,100,100,100);
     SunTimer += 0.08;
     if (SunTimer >= 650) {
-        // theBrick.dead = true;
+        theBrick.dead = true;
     }    
     fill(0, 0, 0);
     text("Pos: " + theBrick.worldx,SunTimer - 39, 84);
@@ -519,8 +483,6 @@ var game = function() {
     theBrick.draw();
     theBrick.slide();
     theBrick.land();
-    // theBrick.jump();
-    // theGround.moveLeft();
     for (var i = 0; i < Bads.length; i++) {
         Bads[i].draw();
         Bads[i].ObjPos(theBrick);
