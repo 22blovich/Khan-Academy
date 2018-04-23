@@ -368,12 +368,13 @@ var intro = function() {
             break;
         }
 
-        Brick.width    = width / Brick.num;
+        Brick.width   = width / Brick.num;
         Brick.height = Brick.width / 2;
-        ball.x_speed = random(1, ball.speed);
-        ball.y_speed = random(1, ball.speed);
         
         setup();
+        
+        ball.x_speed = random(1, Ball.speed);
+        ball.y_speed = random(1, Ball.speed);
         screen       = 1;
     }
 
