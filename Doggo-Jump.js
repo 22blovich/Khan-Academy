@@ -1,20 +1,16 @@
 /*
-    ___________                        --------------
-    _______________                  ------------------
-    ___         _____             --------         -------
-    ___         ______            --------         ------- 
-    ___         _____             --------         ------- 
-    _______________              ---------         --------
-    ___________                  ---------         --------
-    ___________                  ---------         -------- 
-    _______________               --------         --------
-    ___         ______            --------         -------
-    ___         _______           --------         ------- 
-    ___         ______            --------         -------
-    _______________                  ------------------
-    ___________                        --------------    
-   
-    {=====}  [=====]  (=====)   |=====|  /=\   \   <====>      
+    
+    __/\\\\\\\\\\\\\___        _______/\\\\\______        
+     _\/\\\/////////\\\_        _____/\\\///\\\____       
+      _\/\\\_______\/\\\_        ___/\\\/__\///\\\__      
+       _\/\\\\\\\\\\\\\\__        __/\\\______\//\\\_     
+        _\/\\\/////////\\\_        _\/\\\_______\/\\\_    
+         _\/\\\_______\/\\\_        _\//\\\______/\\\__   
+          _\/\\\_______\/\\\_        __\///\\\__/\\\____  
+           _\/\\\\\\\\\\\\\/__        ____\///\\\\\/_____ 
+            _\/////////////____        ______\/////_______
+    
+    {=====}  [=====]  (=====)   |=====|  /=\   \   <====>     
     {}       [     ]  (      )    |=|    / /=  \  <>   
     {}       [     ]  (      )    |=|    / /=\ \  <>  <==>
     {}       [     ]  (      )    |=|    /  =\ \  <>    <=>
@@ -28,6 +24,9 @@ var creator = "Bo Lovich";
 
 var Gravity = new PVector(0, 9.8/60);
 
+var maxBoardLength = 6000;
+var numEnemies = '';
+var SHOW_BOUNDING_BOXES = false;
 // --- HELPER FUNCTIONS ---
 var rColor = function() {
     fill(random(0,255), random(0,255), random(0,255));
@@ -49,7 +48,7 @@ var collides = function(r1, r2) {
            r2.y > (r1.y+r1.height)  ||
            (r2.y+r2.height) < r1.y);
 };
-
+//-----------------------------
 var Brick = function() {
     this.x        = 100; 
     this.y        = 0;
@@ -298,6 +297,11 @@ Brick.prototype.draw = function() {
     this.y += this.velocity.y;
     
     dog(this.x, this.y, 0.15);
+    
+    if (SHOW_BOUNDING_BOXES) {
+        fill(255, 0, 0);
+        rect(this.x, this.y, this.width, this.height);
+    }
 };
 
 Brick.prototype.slide = function() {
@@ -325,6 +329,19 @@ Brick.prototype.land = function() {
         this.onground = true;
         this.jumpNum  = 0;
     }
+};
+
+Brick.prototype.kill = function(enemy) {
+    if (enemy.hitMyHead(this)) {
+        enemy.die();
+        this.score++;
+        
+        this.jumpNum = 1;
+        this.jump();
+    } else if (enemy.hitMyBody(this)) {
+        this.dead = true;
+    }
+
 };
  
 //////////////////////////////////////////
@@ -361,9 +378,17 @@ var Enemy = function(x,y) {
 };    
 
 Enemy.prototype.draw = function() {
+    if (!(this.x <= width+50 && this.x >= -50)) {
+        return;
+    }
+    
     if (this.dead) {
         this.y += 30;
         this.x += 30;
+        
+        if (this.y >= height) {
+            this.shouldRemove = true;
+        }    
     }
 
     Bad(0.05,this.x, this.y);
@@ -373,8 +398,6 @@ Enemy.prototype.draw = function() {
     }
     
     this.worldx += this.direction;
-    
-   
 };
 
 Enemy.prototype.hitMyHead = function(player) {
@@ -388,7 +411,7 @@ Enemy.prototype.hitMyBody = function(player) {
 };
 
 Enemy.prototype.ObjPos = function(theplayer) {
-    this.x = theplayer.x + (this.worldx - theplayer.worldx);    
+    this.x = theplayer.x + (this.worldx - theplayer.worldx);
 };
 
 Enemy.prototype.die = function() {
@@ -400,28 +423,19 @@ Enemy.prototype.win = function() {
     } 
 };
 
-var enemyCoords = [
-    [650,350],
-    [700,350],
-    [9650,350],
-    [1250,350],
-    [1650,350],
-    [2150,350],
-    [2750,350],
-    [3450,350],
-    [4450,350],
-    [5350,350],
-];
+// var enemyCoords = [
+//     [650,350],
+//     [700,350],
+//     [9650,350],
+//     [1250,350],
+//     [1650,350],
+//     [2150,350],
+//     [2750,350],
+//     [3450,350],
+//     [4450,350],
+//     [5350,350],
+// ];
 
-Brick.prototype.kill = function(enemy) {
-    if (enemy.hitMyHead(this)) {
-        enemy.die();
-        this.score++;
-    } else if (enemy.hitMyBody(this)) {
-        this.dead = true;
-    }
-
-};    
 
 var mouseClicked = function() {
     if (mouseX < 200 && mouseY < 100) {
@@ -430,14 +444,21 @@ var mouseClicked = function() {
     }
 };
 
+var createBads = function() {
+    Bads = [];
+    // for (var i = 0; i < enemyCoords.length; i++) {
+    //   Bads.push(new Enemy(enemyCoords[i][0], enemyCoords[i][1]));
+    // }
+    for (var i = 0; i < numEnemies; i++) {
+        Bads.push(new Enemy(random(300, maxBoardLength), 350));   
+    }
+};
+
 var Setup = function() {
     theGround = new Ground(0,350);
     theBrick  = new Brick();
     
-    Bads = [];
-    for (var i = 0; i < enemyCoords.length; i++) {
-      Bads.push(new Enemy(enemyCoords[i][0], enemyCoords[i][1]));
-    }
+    createBads();
     
     SunTimer = 0;
 };    
@@ -448,17 +469,22 @@ var keyPressed = function() {
     if (keyCode === UP) {
         theBrick.jump();
     }
-    if (keyCode === 82) {
+    if (keyCode === 82) { // 'r'
         Setup();
     }    
-    if (keyCode === 77) {
+    if (keyCode === 77) { // 'm'
         screen = 0;
+    }
     
-    }    
+    if (screen === 0) {
+        if (keyCode >= 48 && keyCode <= 57) {
+            numEnemies += String.fromCharCode(keyCode);
+        }
+    }
 };
 
 var youWin = function(){
-    if (theBrick.score >= Bads.length * 4) {
+    if (theBrick.score >= Bads.length && theBrick.dead === false) {
         background(0,0,0);
         fill(255, 0, 0);
         textSize(100);
@@ -471,7 +497,7 @@ var game = function() {
     textSize(20);
     text("hit r to restart", 137,84);
     ellipse(SunTimer,100,100,100);
-    SunTimer += 0.08;
+    SunTimer += 0.15;
     if (SunTimer >= 650) {
         theBrick.dead = true;
     }    
@@ -483,13 +509,17 @@ var game = function() {
     theBrick.draw();
     theBrick.slide();
     theBrick.land();
+    
     for (var i = 0; i < Bads.length; i++) {
         Bads[i].draw();
         Bads[i].ObjPos(theBrick);
         theBrick.kill(Bads[i]);
-        Bads[i].win();   
+        Bads[i].win();
     }
     
+    // TODO: remove shouldRemove enemies from Bads list
+    var i = 0;
+
    // Bad(0.01, 1000,0);
     if (theBrick.dead) {
         background(0, 0, 0);
@@ -519,22 +549,40 @@ var menu = function() {
     textSize(50);
     text("By: " + creator, 150,152);
     text("Graphic Design by: ___",59,200);
-    text("hit SHIFT to begin", 130,311);
-    text("use arrow keys to move",50,350);
-    text("jump on the demons heads",0,500);
-    text("hit r to restart game",10,400);
-    text("hit m to go to menu",10,450);
+    text("hit SHIFT to begin", 130,331);
+    text("use arrow keys to move",50,380);
+    text("jump on the demons heads",0,530);
+    text("hit r to restart game",10,430);
+    text("hit m to go to menu",10,480);
+    textSize(24);
+    text("type the number of enemies you want, then hit enter", 10,287);
+    
+    if (keyIsPressed && (keyCode >= 48 && keyCode <= 57) ||  (keyCode >= 96 && keyCode <= 105)) {
+        println("Key: " + keyCode + " " + String.fromCharCo(keyCode));
+        numEnemies += String.fromCharCode(keyCode);
+    }
+    
+    if (keyCode === 8) {
+        numEnemies = numEnemies.substring(0, numEnemies.length - 1);
+    }
+    if (keyCode === 10) {
+        // println('DONE: ' + parseInt(numEnemies, 10));
+    }
+    textSize(50);
+    text("num of enemys: " + numEnemies, 32,260);
+    
+    dog(482,352,0.2);
     
     if (keyIsPressed && keyCode === SHIFT) {
         screen = 1;
     }    
-};    
+};
 
 draw = function() {
     if (screen === 0) {
         menu();
         Setup();
     } else if (screen === 1) {
-    game();
+        game();
     }
 };
