@@ -21,7 +21,7 @@ var theBrick; // the player
 var Bads;
 var SunTimer; // tracks sun, position, and score
 var creator = "Bo Lovich";
-var artist = "";
+
 var Gravity;
 var grassTile;
 
@@ -40,6 +40,7 @@ var setup = function() {
 
 var preload = function() {
   grassTile = loadImage("https://t3.rbxcdn.com/1977bb7bbfc6b959cf6556daf6381793");
+  sunny = loadImage("https://static5.depositphotos.com/1007168/472/i/950/depositphotos_4725294-stock-photo-sun-cartoon-character.jpg"); 
 };
 
 var puts = function() {
@@ -99,21 +100,14 @@ var dog = function(x, y, size) {
   vertex(2, 477.8);
   vertex(-18.8, 477.5);
   vertex(-18.8, 223.5);
-  //vertex(-18.8, -30.5);
-  //vertex(28.2, -30.5);
-  //vertex(75.2, -30.5);
   vertex(75.5, 86.8);
   vertex(75.7, 204);
   vertex(218.7, 204);
   vertex(361.7, 204);
   vertex(361.9, 86.8);
-  //vertex(362.2, -30.5);
-  //vertex(409.2, -30.5);
-  //vertex(456.2, -30.5);
   vertex(456.2, 223.5);
   vertex(456.2, 477.5);
   vertex(435, 477.8);
-  //vertex(413.7, 478);
   vertex(413.5, 578.3);
   vertex(413.2, 678.5);
   vertex(365.7, 678.5);
@@ -129,7 +123,6 @@ var dog = function(x, y, size) {
   endShape();
   ellipse(60, 150, 125, 315);
   ellipse(382, 150, 125, 315);
-  //rect(10, 150, 398,422);
   arc(82, 485, 200, 250, 90, 270);
   arc(357, 485, 200, 250, -90, 90);
   //stripes
@@ -177,7 +170,7 @@ var Bad = function(size, x, y) {
   scale(0.03);
   rotate(180);
   noStroke();
-  fill(0,0,0,0.7);
+  fill(0);
   //head
   ellipse(746, 2634, 900, 900);
   fill(255, 0, 0);
@@ -441,20 +434,6 @@ Enemy.prototype.win = function() {
   }
 };
 
-// var enemyCoords = [
-//     [650,350],
-//     [700,350],
-//     [9650,350],
-//     [1250,350],
-//     [1650,350],
-//     [2150,350],
-//     [2750,350],
-//     [3450,350],
-//     [4450,350],
-//     [5350,350],
-// ];
-
-
 var mouseClicked = function() {
   if (mouseX < 200 && mouseY < 100) {
     var msg = [theGround.x, theBrick.worldx].join(',');
@@ -464,9 +443,6 @@ var mouseClicked = function() {
 
 var createBads = function() {
   Bads = [];
-  // for (var i = 0; i < enemyCoords.length; i++) {
-  //   Bads.push(new Enemy(enemyCoords[i][0], enemyCoords[i][1]));
-  // }
   for (var i = 0; i < numEnemies; i++) {
     Bads.push(new Enemy(random(300, maxBoardLength), 350));
   }
@@ -514,7 +490,7 @@ var game = function() {
   fill(251, 255, 36);
   textSize(20);
   text("hit r to restart", 137, 84);
-  ellipse(SunTimer, 100, 100, 100);
+  image(sunny,SunTimer,100,100,100);
   SunTimer += 0.15;
   if (SunTimer >= 650) {
     theBrick.dead = true;
@@ -562,7 +538,7 @@ var menu = function() {
   text("Doggo Jump", 25, 92);
   textSize(50);
   text("By: " + creator, 150, 152);
-  text("Graphic Design by: " + artist, 59, 200);
+  text("Graphic Design by: ___", 59, 200);
   text("hit SHIFT to begin", 130, 331);
   text("use arrow keys to move", 50, 380);
   text("jump on the demons heads", 0, 530);
@@ -580,7 +556,7 @@ var menu = function() {
     numEnemies = numEnemies.substring(0, numEnemies.length - 1);
   }
   if (keyCode === 10) {
-    // print('DONE: ' + parseInt(numEnemies, 10));
+    // println('DONE: ' + parseInt(numEnemies, 10));
   }
   textSize(50);
   text("num of enemys: " + numEnemies, 32, 260);
