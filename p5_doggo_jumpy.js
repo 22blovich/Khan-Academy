@@ -177,7 +177,7 @@ var Bad = function(size, x, y) {
   scale(0.03);
   rotate(180);
   noStroke();
-  fill(0);
+  fill(0,0,0,0.7);
   //head
   ellipse(746, 2634, 900, 900);
   fill(255, 0, 0);
