@@ -39,7 +39,7 @@ var setup = function() {
 };
 
 var preload = function() {
-  grassTile = loadImage("https://www.greatmats.com/images/turf-athletic-padded-roll/turf-tile-closeup.jpg");
+  grassTile = loadImage("https://t3.rbxcdn.com/1977bb7bbfc6b959cf6556daf6381793");
 };
 
 var puts = function() {
