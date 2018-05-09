@@ -46,7 +46,7 @@ var puts = function() {
   for (var i = 0; i < arguments.length; i++) {
     print(arguments[i] + " ");
   }
-  println("");
+  print("");
 };
 
 // takes 2 objects, each with {x,y,width,height}
@@ -458,7 +458,7 @@ Enemy.prototype.win = function() {
 var mouseClicked = function() {
   if (mouseX < 200 && mouseY < 100) {
     var msg = [theGround.x, theBrick.worldx].join(',');
-    println(msg);
+    print(msg);
   }
 };
 
@@ -535,10 +535,6 @@ var game = function() {
     Bads[i].win();
   }
 
-  // TODO: remove shouldRemove enemies from Bads list
-  var i = 0;
-
-  // Bad(0.01, 1000,0);
   if (theBrick.dead) {
     background(0, 0, 0);
     fill(255, 0, 0);
@@ -576,7 +572,7 @@ var menu = function() {
   text("type the number of enemies you want, then hit enter", 10, 287);
 
   if (keyIsPressed && (keyCode >= 48 && keyCode <= 57) || (keyCode >= 96 && keyCode <= 105)) {
-    println("Key: " + keyCode + " " + String.fromCharCo(keyCode));
+    print("Key: " + keyCode + " " + String.fromCharCode(keyCode));
     numEnemies += String.fromCharCode(keyCode);
   }
 
@@ -584,7 +580,7 @@ var menu = function() {
     numEnemies = numEnemies.substring(0, numEnemies.length - 1);
   }
   if (keyCode === 10) {
-    // println('DONE: ' + parseInt(numEnemies, 10));
+    // print('DONE: ' + parseInt(numEnemies, 10));
   }
   textSize(50);
   text("num of enemys: " + numEnemies, 32, 260);
