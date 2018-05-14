@@ -558,7 +558,7 @@ var menu = function() {
     textSize(50);
     text("By: " + creator, 150,152);
     text("Graphic Design by: ___",59,200);
-    text("hit SHIFT to begin", 130,331);
+    text("hit s to begin", 130,331);
     text("use arrow keys to move",50,380);
     text("jump on the demons heads",0,530);
     text("hit r to restart game",10,430);
@@ -582,7 +582,7 @@ var menu = function() {
     
     dog(482,352,0.2);
     
-    if (keyIsPressed && keyCode === SHIFT) {
+    if (keyIsPressed && keyCode === 83) {
         screen = 1;
     }    
 };
