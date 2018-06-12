@@ -23,24 +23,28 @@ var SunTimer; // tracks sun, position, and score
 var creator = "Bo Lovich";
 
 var Gravity;
-var grassTile;
 
 var maxBoardLength = 6000;
 var numEnemies = '';
 var SHOW_BOUNDING_BOXES = false;
+
+
+var setup = function() {
+	Gravity = createVector(0, 9.8/60);
+  createCanvas(600,600);
+  angleMode(DEGREES);
+};
+
+var preload = function() {
+  grassTile = loadImage("https://t3.rbxcdn.com/1977bb7bbfc6b959cf6556daf6381793");
+  logo = loadImage("https://learn.ventures/public-images/students/bl/bo-coding-logo.png");
+	Blogo = loadImage("https://learn.ventures/public-images/students/bl/circuit_background.jpg");
+};
 // --- HELPER FUNCTIONS ---
 var rColor = function() {
     fill(random(0,255), random(0,255), random(0,255));
 };
 
-var setup = function() {
-  createCanvas(600, 600);
-	Gravity = createVector(0, 9.8/60);
-};
-
-var preload = function() {
-  grassTile = loadImage("https://www.greatmats.com/images/turf-athletic-padded-roll/turf-tile-closeup.jpg");
-};
 
 var puts = function() {
     for (var i = 0; i < arguments.length; i++) {
@@ -75,8 +79,8 @@ var Brick = function() {
     this.jumpNum    = 0;
     this.maxHeightOverEnemy = -1;
     
-    this.accel    = createVector(0,0);
-    this.velocity = createVector(0,0);
+    this.accel    = new createVector(0,0);
+    this.velocity = new createVector(0,0);
     
     this.worldx = this.x;
     this.worldy = this.y;
@@ -137,10 +141,7 @@ var dog = function(x,y,size) {
         triangle(-2,550,24,604,24,300);
         triangle(439,550,414,604,296,325);
         triangle(110,230,450,195,456,300);
-        //inside ears
-        fill(255, 0, 0);
-        arc(360, 80, 100, 100, -59, 90);
-        arc(75.1, 80, 100, 100, -272, -115);
+    
         //big eye
         fill(100, 0, 255);
         ellipse(123,330,200,200);
@@ -174,8 +175,8 @@ var dog = function(x,y,size) {
 var Bad = function(size,x,y) {
     push();
         translate(x, y);
-        scale(0.03);
         rotate(180);
+        scale(0.03);
         noStroke();
         fill(0);
         //head
@@ -296,7 +297,7 @@ var Bad = function(size,x,y) {
 
 
 Brick.prototype.draw = function() {
-    var accel = createVector(this.accel.x, this.accel.y);
+    var accel = new createVector(this.accel.x, this.accel.y);
     accel.add(Gravity);
     // update velocity with acceleration
     this.velocity.add(accel);
@@ -314,10 +315,11 @@ Brick.prototype.draw = function() {
 };
 
 Brick.prototype.slide = function() {
-    if (keyIsPressed && keyCode === LEFT) {
+    if (keyIsPressed && keyCode === 37) {
         this.worldx -= this.speed;
-    } else if (keyIsPressed && keyCode === RIGHT) {
+    } else if (keyIsPressed && keyCode === 39) {
         this.worldx += this.speed;
+        console.log(this.worldx);
     }
     this.worldx = max(200, this.worldx);
 };
@@ -325,7 +327,7 @@ Brick.prototype.slide = function() {
 
 Brick.prototype.jump = function() {
     if (this.jumpNum < 2) {
-        this.velocity = createVector(0,-5);
+        this.velocity = new createVector(0,-5);
         this.onground = false;
         this.jumpNum++;
     }
@@ -334,7 +336,7 @@ Brick.prototype.jump = function() {
 Brick.prototype.land = function() {
     if (this.y + this.height >= theGround.y) {
         this.y = theGround.y - this.height;
-        this.velocity = createVector(0,0);
+        this.velocity = new createVector(0,0);
         this.onground = true;
         this.jumpNum  = 0;
     }
@@ -361,10 +363,11 @@ var Ground = function(x,y) {
 
 Ground.prototype.draw = function() {
     this.x = -1*theBrick.worldx - 200;
-    for(var j = this.x; j <= width; j += 90) {
-        image(grassTile, j, this.y - 50);
-        // image(getImage("cute/DirtBlock"),j,this.y + 25);
-        // image(getImage("cute/DirtBlock"),j,this.y + 75);
+    for(var j = this.x; j <= width; j += 100) {
+        image((grassTile), j, this.y,100,100);
+        image((grassTile),j,this.y + 100,100,100);
+        image((grassTile),j,this.y + 200,100,100);
+      
     }
 };
 
@@ -381,7 +384,7 @@ var Enemy = function(x,y) {
     this.y = y;
     this.dead = false;
     this.direction = -1; // LEFT
-    this.range = 150;
+    this.range = random(50,200);
     
     this.originalX = this.worldx;
 };    
@@ -449,7 +452,6 @@ Enemy.prototype.win = function() {
 var mouseClicked = function() {
     if (mouseX < 200 && mouseY < 100) {
         var msg = [theGround.x, theBrick.worldx].join(',');
-        println(msg);
     }
 };
 
@@ -475,7 +477,7 @@ var Setup = function() {
 var screen = 0;
 
 var keyPressed = function() {
-    if (keyCode === UP_ARROW) {
+    if (keyCode === 38) {
         theBrick.jump();
     }
     if (keyCode === 82) { // 'r'
@@ -501,8 +503,19 @@ var youWin = function(){
     }
 };    
 var game = function() {
-    background(37, 60, 161);
-    fill(251, 255, 36);
+    if (theBrick.worldx >= random(random(750,2000),random(4500,6000))) {
+        background(255, 255, 0);
+        Bad(200,200);
+    } else {
+        background(50, 50, 50);
+    }    
+    var w = 0;
+    while (w < 650) {
+        fill(0, 0, 0);
+        ellipse(w,0,100,100);
+        w += 50;
+    }
+    fill(255, 255, 255);
     textSize(20);
     text("hit r to restart", 137,84);
     ellipse(SunTimer,100,100,100);
@@ -525,11 +538,6 @@ var game = function() {
         theBrick.kill(Bads[i]);
         Bads[i].win();
     }
-    
-    // TODO: remove shouldRemove enemies from Bads list
-    var i = 0;
-
-   // Bad(0.01, 1000,0);
     if (theBrick.dead) {
         background(0, 0, 0);
         fill(255, 0, 0);
@@ -555,22 +563,18 @@ var menu = function() {
     fill(255, 0, 0);
     textSize(100);
     text("Doggo Jump", 25,92);
-    textSize(50);
-    text("By: " + creator, 150,152);
-    text("Graphic Design by: ___",59,200);
-    text("hit s to begin", 130,331);
+    textSize(40);
+    text("By: " + creator, 150,144);
+    text("Graphic Design by: ___",59,189);
+    text("hit shift to begin", 130,331);
     text("use arrow keys to move",50,380);
     text("jump on the demons heads",0,530);
     text("hit r to restart game",10,430);
     text("hit m to go to menu",10,480);
     textSize(24);
-    text("type the number of enemies you want, then hit enter", 10,287);
+    text("type the number of enemies you want, then hit enter", 10,222);
     
-    if (keyIsPressed && (keyCode >= 48 && keyCode <= 57) ||  (keyCode >= 96 && keyCode <= 105)) {
-        println("Key: " + keyCode + " " + String.fromCharCo(keyCode));
-        numEnemies += String.fromCharCode(keyCode);
-    }
-    
+
     if (keyCode === 8) {
         numEnemies = numEnemies.substring(0, numEnemies.length - 1);
     }
@@ -582,16 +586,30 @@ var menu = function() {
     
     dog(482,352,0.2);
     
-    if (keyIsPressed && keyCode === 83) {
+    if (keyIsPressed && keyCode === SHIFT) {
         screen = 1;
     }    
 };
 
 draw = function() {
-    if (screen === 0) {
-        menu();
-        Setup();
-    } else if (screen === 1) {
-        game();
-    }
+  let timer = 1.1;
+  
+  var do_it = function() { 
+		if (screen === 0) {
+		    menu();
+	  	  Setup();
+		} else if (screen === 1) {
+	  	  game();
+		}
+  }  
+  do_it();
+//   if (frameCount % 60 == 0 && timer > 0) { 
+//     timer --;
+//     image(Blogo,0,0,600,600);
+// 		image(logo,0,0,600,600);
+  
+//   }
+//   if (timer == 0) {
+//     do_it();
+//   }
 };
